@@ -1,48 +1,52 @@
-const express = require('express')
-const app = express()
-const port = 3000
+const express = require("express");
+const app = express();
+const port = 3001;
 
-todos=[];
-// route handlers
-app.get('/', (req, res) => {
-  res.send(todos);
-})
+let todos = [];
 let id = 1000;
-app.post('/create/:value', (req, res) => {
-    const {value} = req.params;
-    id++;
-    let newtodo = {id, task: value};
-    todos.push(newtodo);
-    res.send(newtodo);
-    
-})
-var removeByAttr = function(todos, attr, value) {
-  var i = todos.length;
-  // Ensure value is a string for comparison
-  value = String(value); 
 
-  while(i--) {
-    if (todos[i] && todos[i].hasOwnProperty(attr) && todos[i][attr] === value) {
-      todos.splice(i, 1); // Remove the element
-    }
+app.get("/", (req, res) => {
+  res.send(todos);
+});
+
+app.post("/create/:value", (req, res) => {
+  const { value } = req.params;
+  id++;
+  let newtodo = { id, task: value };
+  todos.push(newtodo);
+  res.send(newtodo);
+});
+
+// Function to remove todo by ID
+const removeById = (id) => {
+  id = parseInt(id); // Convert id to number
+  let index = todos.findIndex((todo) => todo.id === id);
+  if (index !== -1) {
+    todos.splice(index, 1); // Remove the object at the found index
+    return true;
   }
-  return todos;
+  return false;
 };
 
-app.delete('/:id', (req, res) => {
+// DELETE request to remove a todo
+app.delete("/:id", (req, res) => {
   const { id } = req.params;
   
-  // Debug: Check the value of id
   console.log(`Deleting todo with id: ${id}`);
-  
+
   // Call the function to remove todo
-  removeByAttr(todos, 'id', id);
-  
-  // Debug: Check the updated todos array
-  console.log('Updated Todos:', todos);
-  
-  res.send(todos); // Return the updated todos
+  const success = removeById(id);
+
+  // Debugging Output
+  console.log("Updated Todos:", todos);
+
+  if (success) {
+    res.send({ message: `Todo with id ${id} deleted.`, todos });
+  } else {
+    res.status(404).send({ message: "Todo not found!" });
+  }
 });
+
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+  console.log(`Example app listening on port ${port}`);
+});
