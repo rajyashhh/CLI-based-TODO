@@ -1,6 +1,9 @@
 const express = require("express");
 const app = express();
 const port = 3001;
+const data = require('./data.json');
+const fs = require('fs');
+
 
 let todos = [];
 let id = 1000;
@@ -17,27 +20,24 @@ app.post("/create/:value", (req, res) => {
   res.send(newtodo);
 });
 
-// Function to remove todo by ID
 const removeById = (id) => {
-  id = parseInt(id); // Convert id to number
+  id = parseInt(id); 
   let index = todos.findIndex((todo) => todo.id === id);
   if (index !== -1) {
-    todos.splice(index, 1); // Remove the object at the found index
+    todos.splice(index, 1); 
     return true;
   }
   return false;
 };
 
-// DELETE request to remove a todo
 app.delete("/:id", (req, res) => {
   const { id } = req.params;
   
   console.log(`Deleting todo with id: ${id}`);
 
-  // Call the function to remove todo
   const success = removeById(id);
 
-  // Debugging Output
+  
   console.log("Updated Todos:", todos);
 
   if (success) {
