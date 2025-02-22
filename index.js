@@ -6,7 +6,7 @@ const fs = require('fs');
 
 
 let todos = [];
-let id = 1000;
+
 
 app.get("/", (req, res) => {
   res.send(todos);
@@ -14,7 +14,7 @@ app.get("/", (req, res) => {
 
 app.post("/create/:value", (req, res) => {
   const { value } = req.params;
-  id++;
+  let id = Math.floor(math.random*1000);
   let newtodo = { id, task: value };
   todos.push(newtodo);
   res.send(newtodo);
